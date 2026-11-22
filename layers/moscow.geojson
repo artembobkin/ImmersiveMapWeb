@@ -1,0 +1,74 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "properties": { "name": "Kremlin", "fill": "#d33a2c", "fill-opacity": 0.35, "stroke": "#a01d12", "stroke-width": 3 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[37.6127, 55.7522], [37.6182, 55.7486], [37.6233, 55.7497], [37.6232, 55.7530], [37.6189, 55.7550], [37.6127, 55.7522]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "properties": { "name": "Red Square" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[37.6198, 55.7553], [37.6237, 55.7531], [37.6250, 55.7537], [37.6212, 55.7560], [37.6198, 55.7553]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "properties": { "name": "Zaryadye Park", "fill": "#2e9d4f", "fill-opacity": 0.4 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[37.6252, 55.7522], [37.6312, 55.7502], [37.6340, 55.7518], [37.6283, 55.7540], [37.6252, 55.7522]],
+          [[37.6285, 55.7517], [37.6300, 55.7512], [37.6306, 55.7520], [37.6290, 55.7524], [37.6285, 55.7517]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "properties": { "name": "Tverskaya Street", "stroke": "#7a35d6", "stroke-width": 5 },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [[37.6141, 55.7569], [37.6110, 55.7593], [37.6074, 55.7622], [37.6032, 55.7655], [37.5990, 55.7690], [37.5952, 55.7718]]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "properties": { "name": "Embankment" },
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [[37.6020, 55.7470], [37.6100, 55.7484], [37.6180, 55.7478], [37.6260, 55.7490], [37.6330, 55.7478]],
+          [[37.6330, 55.7478], [37.6400, 55.7460], [37.6450, 55.7430]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "properties": { "name": "Okhotny Ryad", "marker-color": "#e94b2a", "marker-size": "large" },
+      "geometry": { "type": "Point", "coordinates": [37.6155, 55.7577] }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "properties": { "name": "Teatralnaya" },
+      "geometry": { "type": "Point", "coordinates": [37.6200, 55.7580] }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "properties": { "name": "Kitay-Gorod", "marker-radius": 6 },
+      "geometry": { "type": "MultiPoint", "coordinates": [[37.6315, 55.7544], [37.6339, 55.7569]] }
+    }
+  ]
+}
