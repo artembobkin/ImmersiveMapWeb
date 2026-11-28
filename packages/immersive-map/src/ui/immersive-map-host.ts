@@ -42,6 +42,7 @@ import { ImmersiveMapCameraController } from "./camera/immersive-map-camera-cont
 import { ImmersiveMapDebugRuntimeSlot, type ImmersiveMapDebugPanel } from "./immersive-map-debug-panel.ts";
 import { ImmersiveMapRenderer, type ImmersiveMapOptions as ImmersiveMapRendererAppOptions, type TileLoadedEvent } from "./immersive-map.ts";
 import { resolveSettingsRebuild } from "./immersive-map-settings-rebuild.ts";
+import { LoadingIndicator } from "./loading-indicator.ts";
 import { DeviceRecovery, type ImmersiveMapDeviceLostEvent } from "./device-recovery.ts";
 import type { FrameEvent, MapView } from "./immersive-map-view.ts";
 
@@ -97,6 +98,8 @@ export class ImmersiveMap {
   private readonly deviceRecovery = new DeviceRecovery();
   private readonly deviceLostListeners = new Set<(event: ImmersiveMapDeviceLostEvent) => void>();
   private readonly deviceRestoredListeners = new Set<() => void>();
+  /** The sign that the map has no renderer that drew a frame yet, none when the app shows its own. */
+  private readonly loadingIndicator: LoadingIndicator | null;
 
   private readonly frameEvents = forwarded<(event: FrameEvent) => void>((renderer, listener) => renderer.onFrame(listener));
   private readonly tileEvents = forwarded<(event: TileLoadedEvent) => void>((renderer, listener) => renderer.onTileLoaded(listener));
@@ -137,6 +140,7 @@ export class ImmersiveMap {
     canvas.style.cssText = "display:block;width:100%;height:100%;cursor:grab";
     options.container.append(canvas);
     this.canvas = canvas;
+    this.loadingIndicator = options.loadingIndicator === false ? null : new LoadingIndicator(canvas);
     if (getComputedStyle(options.container).position === "static") options.container.style.position = "relative";
     this.annotations = new ImmersiveMapAnnotations(canvas, () => this.requestFrame());
     this.debug = new ImmersiveMapDebugRuntimeSlot({
@@ -159,6 +163,7 @@ export class ImmersiveMap {
     const { camera: _camera, ...appOptions } = this.options;
     // The renderer a loss is of, known once it is built (a loss before that is a failed build).
     let built: ImmersiveMapRenderer | null = null;
+    this.loadingIndicator?.show();
     const renderer = await ImmersiveMapRenderer.create({
       ...appOptions,
       ...(cameraPosition === undefined ? (this.options.camera === undefined ? {} : { camera: this.options.camera }) : cameraPosition === null ? {} : { camera: cameraPosition }),
@@ -185,6 +190,11 @@ export class ImmersiveMap {
     }
     built = renderer;
     this.renderer = renderer;
+    // The sign of the start goes with the renderer's first frame.
+    const stopListening = renderer.onFrame(() => {
+      stopListening();
+      if (this.renderer === renderer) this.loadingIndicator?.hide();
+    });
     // The renderer resolved the archive's depth as last read: the map runs by it.
     if (!isRecreation) this.currentSettings = renderer.settings;
     for (const events of this.allEvents()) {
@@ -278,6 +288,7 @@ export class ImmersiveMap {
     const recreation = this.buildRenderer(built, cameraPosition, true)
       .catch((error: unknown) => {
         console.error(`ImmersiveMap could not build its renderer again: ${String(error)}`);
+        this.loadingIndicator?.hide();
       })
       .then(() => {
         this.recreation = null;
@@ -309,8 +320,10 @@ export class ImmersiveMap {
     for (const listener of this.deviceLostListeners) listener(event);
     if (wait === null) {
       console.error("ImmersiveMap lost its WebGPU device too often and stops drawing.");
+      this.loadingIndicator?.hide();
       return;
     }
+    this.loadingIndicator?.show();
     const restore = (): void => {
       if (this.destroyed || this.renderer !== lost) return;
       void this.recreateRenderer().then(() => {
@@ -527,6 +540,7 @@ export class ImmersiveMap {
     this.renderer = null;
     this.debug.destroy();
     this.annotations.destroy();
+    this.loadingIndicator?.destroy();
     this.canvas.remove();
   }
 }

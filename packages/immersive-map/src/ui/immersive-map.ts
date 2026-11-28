@@ -156,6 +156,13 @@ export interface ImmersiveMapOptions {
   readonly cameraControls?: boolean | { readonly isEnabled?: boolean; readonly maximumPitch?: number };
   /** The recorder whose tour exports draw this map's settings, camera, pins, layers and annotations (`ImmersiveMap.tourVideoRecorder`). */
   readonly tourVideoRecorder?: ImmersiveMapTourVideoRecorder | null;
+  /**
+   * The ring that turns in the middle of the container while the map starts
+   * and while it builds its renderer again after a lost GPU device
+   * (`LoadingIndicator`), shown when left out. `false` for an app that shows
+   * its own.
+   */
+  readonly loadingIndicator?: boolean;
 }
 
 /**

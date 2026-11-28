@@ -115,3 +115,20 @@ test("the map draws again on a new device after the browser took its GPU device 
   expect(after.center[0]).toBeCloseTo(before.center[0], 5);
   expect(after.center[1]).toBeCloseTo(before.center[1], 5);
 });
+
+test("the map starts on a GPU that refuses at first, a ring turning until its first frame", async ({ page }) => {
+  // A browser whose GPU process just reset: the first two requests for an adapter are refused, as Chrome refuses them.
+  await page.addInitScript(() => {
+    const request = GPU.prototype.requestAdapter;
+    let refusals = 2;
+    GPU.prototype.requestAdapter = function (options) {
+      if (refusals-- > 0) return Promise.reject(new DOMException("A valid external Instance reference no longer exists.", "OperationError"));
+      return request.call(this, options);
+    };
+  });
+  await page.goto(`/?archive=${ARCHIVE}&lon=37.6175&lat=55.752&zoom=14.2`);
+  const ring = page.locator("[data-immersive-map-loading]");
+  await expect(ring).toBeVisible();
+  await page.waitForFunction(() => (window as any).tileStats?.length >= 1, null, { timeout: 30_000 });
+  await expect(ring).toBeHidden();
+});
