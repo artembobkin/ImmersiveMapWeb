@@ -1,6 +1,6 @@
 {
   "name": "@artembobkin/immersive-map",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A WebGPU map for web pages: a globe that unrolls into a flat map, vector tiles from PMTiles, buildings, terrain, shadows, pins, layers and 3D models, with a Rust core compiled to WebAssembly.",
   "keywords": ["map", "maps", "webgpu", "globe", "pmtiles", "vector-tiles", "openstreetmap", "3d", "terrain", "webassembly"],
   "license": "MIT",
